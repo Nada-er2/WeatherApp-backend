@@ -9,7 +9,7 @@ const cityRoutes = require("./routes/cities");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ CORS مفعل فقط لموقع Vercel ديالك
+
 app.use(cors({
   origin: "https://weather-app-frontend-dun.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE"],
