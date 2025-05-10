@@ -16,8 +16,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const authRoutes = require("./routes/authRoutes");
-const cityRoutes = require("./routes/cityRoutes");
+const authRoutes = require("./routes/auth");
+const cityRoutes = require("./routes/cities");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
