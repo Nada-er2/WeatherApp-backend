@@ -1,16 +1,3 @@
-// const app = require('./app');
-// require('dotenv').config();
-// const mongoose = require('mongoose');
-
-// const PORT = process.env.PORT || 3000;
-
-// mongoose.connect(process.env.MONGO_URI)
-//   .then(() => {
-//     console.log('Connected to MongoDB');
-//     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-//   })
-//   .catch(err => console.log(err));
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -22,22 +9,25 @@ const cityRoutes = require("./routes/cities");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ CORS مفعّل لكل origins (ممكن تخصيصو)
-app.use(cors());
+// ✅ CORS مفعل فقط لموقع Vercel ديالك
+app.use(cors({
+  origin: "https://weather-app-frontend-dun.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-// ✅ JSON parsing
 app.use(express.json());
 
-// ✅ API routes
+// Routes
 app.use("/auth", authRoutes);
 app.use("/cities", cityRoutes);
 
-// ✅ Default route
+// Test route
 app.get("/", (req, res) => {
   res.send("✅ Weather API is running!");
 });
 
-// ✅ MongoDB connection
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
