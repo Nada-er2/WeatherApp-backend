@@ -1,47 +1,34 @@
-// Import des modules nécessaires
 const express = require('express');
 const cors = require('cors');
+const authRoutes = require('./routes/auth');
+const cityRoutes = require('./routes/cities');
+require('dotenv').config();
+
 const app = express();
 
-// Configuration des origines autorisées (frontend URLs)
-const allowedOrigins = [
-  'https://weather-app-frontend-dun.vercel.app',
-  'https://weather-app-frontend-19zb6fxa2-nada-er2s-projects.vercel.app'
-];
-
-// Middleware CORS
-app.use(cors({
-  origin: function (origin, callback) {
-    // Autoriser les requêtes sans origin (comme Postman)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('Not allowed by CORS'));
-    }
-  }
-}));
-
-// Middleware pour lire le corps des requêtes
+// Middleware
 app.use(express.json());
 
-// Exemple de route (tu peux adapter selon ton projet)
-app.get('/', (req, res) => {
-  res.send('Backend WeatherApp is running ✅');
-});
+// CORS Configuration
+const allowedOrigins = [
+  'http://localhost:3001', // Pour les tests locaux
+  'https://weather-app-frontend-dun.vercel.app', // Ton URL Vercel
+  'https://weather-app-frontend-19zb6fxa2-nada-er2s-projects.vercel.app' // Autre URL Vercel si besoin
+];
 
-// Exemple d'endpoint météo
-app.get('/api/weather', (req, res) => {
-  // Ici tu peux mettre la logique pour appeler l’API météo externe
-  res.json({
-    city: "Casablanca",
-    temperature: 27,
-    description: "Ensoleillé"
-  });
-});
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
-// Port d'écoute
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Routes
+app.use('/auth', authRoutes);
+app.use('/cities', cityRoutes);
+
+module.exports = app;
