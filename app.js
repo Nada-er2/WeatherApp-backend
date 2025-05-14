@@ -1,25 +1,47 @@
-// const express = require('express');
-// const cors = require('cors');
-// const app = express();
+// Import des modules nécessaires
+const express = require('express');
+const cors = require('cors');
+const app = express();
 
-// app.use(cors(corsOptions));
-// app.use(express.json());
+// Configuration des origines autorisées (frontend URLs)
+const allowedOrigins = [
+  'https://weather-app-frontend-dun.vercel.app',
+  'https://weather-app-frontend-19zb6fxa2-nada-er2s-projects.vercel.app'
+];
 
-// // Configuration CORS spécifique
-// const corsOptions = {
-//     origin: [
-//         'https://incomparable-clafoutis-13689a.netlify.app',  // Votre domaine Netlify
-//         'http://localhost:3000',                              // Pour le développement local
-//         'http://localhost:5500'                               // Pour le développement local avec Live Server
-//     ],
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//     allowedHeaders: ['Content-Type', 'Authorization'],
-//     credentials: true
-// };
+// Middleware CORS
+app.use(cors({
+  origin: function (origin, callback) {
+    // Autoriser les requêtes sans origin (comme Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 
+// Middleware pour lire le corps des requêtes
+app.use(express.json());
 
+// Exemple de route (tu peux adapter selon ton projet)
+app.get('/', (req, res) => {
+  res.send('Backend WeatherApp is running ✅');
+});
 
-// app.use('/auth', require('./routes/auth'));
-// app.use('/cities', require('./routes/cities'));
+// Exemple d'endpoint météo
+app.get('/api/weather', (req, res) => {
+  // Ici tu peux mettre la logique pour appeler l’API météo externe
+  res.json({
+    city: "Casablanca",
+    temperature: 27,
+    description: "Ensoleillé"
+  });
+});
 
-// module.exports = app;
+// Port d'écoute
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
